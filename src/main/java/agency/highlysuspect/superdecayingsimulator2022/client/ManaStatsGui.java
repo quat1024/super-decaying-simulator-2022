@@ -39,22 +39,19 @@ public class ManaStatsGui extends Screen {
 		//NB:
 		// the 32f in blit0 comes from the texture being 32 pixels big;
 		// the 6s are because the ninepatch portion of the texture is 18x18 with nine 6x6 cells
-		// The 6 in blit0 corresponds to the 6s here only because 
+		// The 6 in blit0 correspond to the 6s here, only because i want to draw the texture at 1x size.
 		
-		//Corners
 		blit0(ms, xMin    , xMin + 6, yMin    , yMin + 6, 0); //top left
 		blit0(ms, xMax - 6, xMax    , yMin    , yMin + 6, 2); //top right
 		blit0(ms, xMin    , xMin + 6, yMax - 6, yMax    , 6); //bottom left
 		blit0(ms, xMax - 6, xMax    , yMax - 6, yMax    , 8); //bottom right
 		
-		//Edges
 		blit0(ms, xMin + 6, xMax - 6, yMin    , yMin + 6, 1); //top
 		blit0(ms, xMin + 6, xMax - 6, yMax - 6, yMax    , 7); //bottom
 		blit0(ms, xMin    , xMin + 6, yMin + 6, yMax - 6, 3); //left
 		blit0(ms, xMax - 6, xMax    , yMin + 6, yMax - 6, 5); //right
 		
-		//Center
-		blit0(ms, xMin + 6, xMax - 6, yMin + 6, yMax - 6, 4);
+		blit0(ms, xMin + 6, xMax - 6, yMin + 6, yMax - 6, 4); //center
 	}
 	
 	private void blit0(MatrixStack ms, int x1, int x2, int y1, int y2, int cell) {
