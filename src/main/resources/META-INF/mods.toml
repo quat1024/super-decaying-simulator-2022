@@ -1,0 +1,21 @@
+modLoader="javafml"
+loaderVersion="[36,)"
+license="LGPL-3.0-or-later"
+issueTrackerURL="https://github.com/quat1024/incorporeal-2-forge/issues"
+
+[[mods]]
+modId="super-decaying-simulator-2022"
+version="${file.jarVersion}"
+displayName="Super Decaying Simulator 2022"
+displayURL="https://github.com/quat1024/super-decaying-simulator-2022/"
+#logoFile="examplemod.png" #TODO
+credits="Ur mom"
+authors="quaternary"
+description="Botania addon, lets you make all the flowers decay lol"
+
+[[dependencies.super-decaying-simulator-2022]]
+modId="botania"
+mandatory=true
+versionRange="[1.16.5-419,)"
+ordering="AFTER"
+side="BOTH"

@@ -1,0 +1,13 @@
+{
+	"required": true,
+	"minVersion": "0.8",
+	"compatibilityLevel": "JAVA_8",
+	"package": "agency.highlysuspect.superdecayingsimulator2022.mixin",
+	"refmap": "super-decaying-simulator-2022.refmap.json",
+	"mixins": [
+		"TileEntityGeneratingFlowerMixin"
+	],
+	"injectors": {
+		"defaultRequire": 1
+	}
+}
