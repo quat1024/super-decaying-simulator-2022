@@ -1,5 +1,6 @@
 package agency.highlysuspect.superdecayingsimulator2022;
 
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.fml.ModLoadingContext;
@@ -13,6 +14,10 @@ import java.util.function.Consumer;
 @Mod(SuperDecayingSimulator2022.MODID)
 public class SuperDecayingSimulator2022 {
 	public static final String MODID = "super-decaying-simulator-2022";
+	
+	public static ResourceLocation id(String path) {
+		return new ResourceLocation(MODID, path);
+	} 
 	
 	public SuperDecayingSimulator2022() {
 		registerGeneratingFlowers(GeneratingFlowerType::register);

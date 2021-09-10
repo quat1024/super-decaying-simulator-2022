@@ -1,10 +1,12 @@
 package agency.highlysuspect.superdecayingsimulator2022;
 
+import agency.highlysuspect.superdecayingsimulator2022.client.ManaStatsGui;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
+import net.minecraft.client.Minecraft;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.ISuggestionProvider;
 import net.minecraft.util.text.StringTextComponent;
@@ -27,7 +29,8 @@ public class SuperDecayingSimulator2022Commands {
 			.then(statsShowAll(literal("show-all")))
 			.then(statsShowOne(literal("show")))
 			.then(statsResetAll(literal("reset-all").requires(src -> src.hasPermissionLevel(2))))
-			.then(statsResetOne(literal("reset").requires(src -> src.hasPermissionLevel(2))));
+			.then(statsResetOne(literal("reset").requires(src -> src.hasPermissionLevel(2))))
+			.then(statsGui(literal("gui")));
 	}
 	
 	private static ArgumentBuilder<CommandSource, ?> statsShowAll(ArgumentBuilder<CommandSource, ?> a) {
@@ -77,5 +80,14 @@ public class SuperDecayingSimulator2022Commands {
 				ctx.getSource().sendFeedback(new StringTextComponent("Reset stats for flower " + type.name), true);
 				return (int) stats.total();
 			});
+	}
+	
+	private static ArgumentBuilder<CommandSource, ?> statsGui(ArgumentBuilder<CommandSource, ?> a) {
+		return a.executes(ctx -> {
+			//TODO LOOOOL obviously this is not multiplayer safe
+			ManaStatsWsd stats = ManaStatsWsd.getFor(ctx);
+			Minecraft.getInstance().displayGuiScreen(new ManaStatsGui());
+			return 0;
+		});
 	}
 }
