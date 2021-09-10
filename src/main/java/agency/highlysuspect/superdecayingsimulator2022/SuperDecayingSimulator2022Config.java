@@ -35,7 +35,7 @@ public class SuperDecayingSimulator2022Config {
 		
 		for(GeneratingFlowerType type : GeneratingFlowerType.ALL_TYPES) {
 			decayTimeOverride.put(type, builder
-				.defineInRange(type.name, defaultDecayTime, 0, defaultDecayTime));
+				.defineInRange(type.name, defaultDecayTime, 0, type.passiveByDefault ? defaultDecayTime : Integer.MAX_VALUE));
 		}
 		
 		builder.pop();
