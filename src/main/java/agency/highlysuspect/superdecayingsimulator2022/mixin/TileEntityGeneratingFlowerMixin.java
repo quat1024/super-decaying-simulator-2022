@@ -39,7 +39,7 @@ public class TileEntityGeneratingFlowerMixin {
 	)
 	private void addManaEnd(int x, CallbackInfo ci) {
 		int howMuch = mana - manaBeforeAdding;
-		if(x > 0 && howMuch > 0 && SuperDecayingSimulator2022Config.CONFIG.trackStatistics.get()) {
+		if(x > 0 && howMuch > 0) {
 			World world = ((TileEntityGeneratingFlower) (Object) this).getWorld();
 			if(world instanceof ServerWorld) {
 				ManaStatsWsd.getFor((ServerWorld) world).track(generatingFlowerType(), howMuch);
