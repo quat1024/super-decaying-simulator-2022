@@ -3,6 +3,8 @@ package agency.highlysuspect.superdecayingsimulator2022.mixin;
 import agency.highlysuspect.superdecayingsimulator2022.GeneratingFlowerType;
 import agency.highlysuspect.superdecayingsimulator2022.SuperDecayingSimulator2022Config;
 import net.minecraft.tileentity.TileEntityType;
+import net.minecraft.util.math.MathHelper;
+import net.minecraftforge.common.ForgeConfigSpec;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -22,8 +24,8 @@ public class TileEntityGeneratingFlowerMixin {
 	
 	@Inject(
 		method = "addMana",
-		at = @At("HEAD"),
-		remap = false
+		remap = false,
+		at = @At("HEAD")
 	)
 	private void addManaStart(int x, CallbackInfo ci) {
 		if(x > 0)	manaBeforeAdding = mana;
@@ -31,8 +33,8 @@ public class TileEntityGeneratingFlowerMixin {
 	
 	@Inject(
 		method = "addMana",
-		at = @At("TAIL"),
-		remap = false
+		remap = false,
+		at = @At("TAIL") //same dude
 	)
 	private void addManaEnd(int x, CallbackInfo ci) {
 		if(x > 0) {
@@ -41,30 +43,24 @@ public class TileEntityGeneratingFlowerMixin {
 		}
 	}
 	
-	@Inject(
-		method = "isPassiveFlower",
-		at = @At("HEAD"),
+	//Redirect the original call, instead of editing the isPassiveFlower method itself
+	//This is so things like the thermalily (which override the method to return *false*) can work
+	@Redirect(
+		method = "tickFlower",
 		remap = false,
-		cancellable = true
+		at = @At(
+			value = "INVOKE",
+			target = "Lvazkii/botania/api/subtile/TileEntityGeneratingFlower;isPassiveFlower()Z",
+			remap = false
+		)
 	)
-	private void butIsItReallyPassiveTho(CallbackInfoReturnable<Boolean> cir) {
-		cir.setReturnValue(SuperDecayingSimulator2022Config.CONFIG.passiveOverride.get(generatingFlowerType()).get());
+	private boolean isPassiveFlowerRedirect(TileEntityGeneratingFlower tile) {
+		ForgeConfigSpec.BooleanValue b = SuperDecayingSimulator2022Config.CONFIG.passiveOverride.get(generatingFlowerType());
+		if(b != null && b.get()) return true;
+		
+		else return tile.isPassiveFlower();
 	}
-	//Doesnt work
-//	@ModifyVariable(
-//		method = "tickFlower",
-//		at = @At(
-//			value = "INVOKE_ASSIGN",
-//			target = "Lvazkii/botania/api/BotaniaAPI;getPassiveFlowerDecay()I",
-//			remap = false
-//		),
-//		remap = false
-//	)
-//	private int muhBalance(int oldDecay) {
-//		return SuperDecayingSimulator2022Config.CONFIG.decayTimeOverride.get(generatingFlowerType()).get();
-//	}
 	
-	//this is a weird injection, sorry about it
 	@Redirect(
 		method = "tickFlower",
 		remap = false,
@@ -74,8 +70,11 @@ public class TileEntityGeneratingFlowerMixin {
 			remap = false
 		)
 	)
-	private int getEpicFlowerDecay(BotaniaAPI what) {
-		return SuperDecayingSimulator2022Config.CONFIG.decayTimeOverride.get(generatingFlowerType()).get();
+	private int getPassiveFlowerDecayRedirect(BotaniaAPI api) {
+		ForgeConfigSpec.IntValue time = SuperDecayingSimulator2022Config.CONFIG.decayTimeOverride.get(generatingFlowerType());
+		if(time != null) return MathHelper.clamp(time.get(), 0, api.getPassiveFlowerDecay());
+		
+		else return api.getPassiveFlowerDecay();
 	}
 	
 	@Unique
