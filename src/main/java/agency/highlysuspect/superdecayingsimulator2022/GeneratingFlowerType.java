@@ -5,6 +5,7 @@ import net.minecraft.block.Block;
 import net.minecraft.tileentity.TileEntityType;
 import vazkii.botania.api.subtile.TileEntityGeneratingFlower;
 
+import javax.annotation.Nullable;
 import java.util.*;
 
 public class GeneratingFlowerType implements Comparable<GeneratingFlowerType> {
@@ -18,6 +19,10 @@ public class GeneratingFlowerType implements Comparable<GeneratingFlowerType> {
 		this.name = name;
 		this.representative = representative;
 		this.types = types;
+	}
+	
+	public static @Nullable GeneratingFlowerType byName(String name) {
+		return NAME_LOOKUP.get(name);
 	}
 	
 	//Used in config file and stuff
@@ -51,7 +56,18 @@ public class GeneratingFlowerType implements Comparable<GeneratingFlowerType> {
 		return name;
 	}
 	
-	//Please don't write to this map directly (especially in the Forge Funtime Land of parallel mod loading)
+	//Please don't write to these tables directly (especially in the Forge Funtime Land of parallel mod loading)
 	public static final Map<TileEntityType<? extends TileEntityGeneratingFlower>, GeneratingFlowerType> TYPE_LOOKUP = new HashMap<>();
+	public static final Map<String, GeneratingFlowerType> NAME_LOOKUP = new HashMap<>();
 	public static final List<GeneratingFlowerType> ALL_TYPES = new ArrayList<>();
+	
+	//dont call
+	void register() {
+		ALL_TYPES.add(this);
+		NAME_LOOKUP.put(name, this);
+		
+		for(TileEntityType<? extends TileEntityGeneratingFlower> tileType : types) {
+			TYPE_LOOKUP.put(tileType, this);
+		}
+	}
 }

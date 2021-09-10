@@ -1,19 +1,20 @@
 package agency.highlysuspect.superdecayingsimulator2022.mixin;
 
 import agency.highlysuspect.superdecayingsimulator2022.GeneratingFlowerType;
+import agency.highlysuspect.superdecayingsimulator2022.ManaStatsWsd;
 import agency.highlysuspect.superdecayingsimulator2022.SuperDecayingSimulator2022Config;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.world.World;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.ForgeConfigSpec;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import vazkii.botania.api.BotaniaAPI;
 import vazkii.botania.api.subtile.TileEntityGeneratingFlower;
 
@@ -34,12 +35,15 @@ public class TileEntityGeneratingFlowerMixin {
 	@Inject(
 		method = "addMana",
 		remap = false,
-		at = @At("TAIL") //same dude
+		at = @At("TAIL") //Oh hey i have one of those
 	)
 	private void addManaEnd(int x, CallbackInfo ci) {
-		if(x > 0) {
-			int howMuch = mana - manaBeforeAdding;
-			System.out.println(generatingFlowerType() + " generated " + howMuch + " mana");
+		int howMuch = mana - manaBeforeAdding;
+		if(x > 0 && howMuch > 0 && SuperDecayingSimulator2022Config.CONFIG.trackStatistics.get()) {
+			World world = ((TileEntityGeneratingFlower) (Object) this).getWorld();
+			if(world instanceof ServerWorld) {
+				ManaStatsWsd.getFor((ServerWorld) world).track(generatingFlowerType(), howMuch);
+			}
 		}
 	}
 	

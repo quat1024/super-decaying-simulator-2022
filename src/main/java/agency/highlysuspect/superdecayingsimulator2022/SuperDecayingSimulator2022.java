@@ -1,10 +1,10 @@
 package agency.highlysuspect.superdecayingsimulator2022;
 
-import net.minecraft.tileentity.TileEntityType;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
-import vazkii.botania.api.subtile.TileEntityGeneratingFlower;
 import vazkii.botania.common.block.ModSubtiles;
 
 import java.util.Collections;
@@ -15,18 +15,14 @@ public class SuperDecayingSimulator2022 {
 	public static final String MODID = "super-decaying-simulator-2022";
 	
 	public SuperDecayingSimulator2022() {
-		registerGeneratingFlowers(generatingFlowerType -> {
-			GeneratingFlowerType.ALL_TYPES.add(generatingFlowerType);
-			
-			for(TileEntityType<? extends TileEntityGeneratingFlower> tileType : generatingFlowerType.types) {
-				GeneratingFlowerType.TYPE_LOOKUP.put(tileType, generatingFlowerType);
-			}
-		});
+		registerGeneratingFlowers(GeneratingFlowerType::register);
 		
 		Collections.sort(GeneratingFlowerType.ALL_TYPES);
 		
 		//Can't do this in common setup because the config just.. doesnt.... show up???
 		ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, SuperDecayingSimulator2022Config.buildSpecAndSetInstance());
+		
+		MinecraftForge.EVENT_BUS.addListener((RegisterCommandsEvent e) -> SuperDecayingSimulator2022Commands.register(e.getDispatcher()));
 	}
 	
 	public static void registerGeneratingFlowers(Consumer<GeneratingFlowerType> c) {

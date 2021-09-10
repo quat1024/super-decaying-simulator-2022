@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class SuperDecayingSimulator2022Config {
-	//public final ForgeConfigSpec.BooleanValue trackStatistics;
+	public final ForgeConfigSpec.BooleanValue trackStatistics;
 	
 	public final Map<GeneratingFlowerType, ForgeConfigSpec.BooleanValue> passiveOverride = new HashMap<>();
 	public final Map<GeneratingFlowerType, ForgeConfigSpec.IntValue> decayTimeOverride = new HashMap<>();
@@ -21,11 +21,11 @@ public class SuperDecayingSimulator2022Config {
 	}
 	
 	public SuperDecayingSimulator2022Config(ForgeConfigSpec.Builder builder) {
-		//builder.push("Statistics");
-		//
-		//trackStatistics = builder.comment("Should the mod track statistics of how much mana each type of flower has generated?").define("statistics", false);
-		//
-		//builder.pop();
+		builder.push("Statistics");
+
+		trackStatistics = builder.comment("Should the mod track statistics of how much mana each type of flower has generated?").define("statistics", false);
+
+		builder.pop();
 		builder.comment("If 'true', these flowers will experience passive decay.").push("Passivity");
 		
 		for(GeneratingFlowerType type : GeneratingFlowerType.ALL_TYPES) {
