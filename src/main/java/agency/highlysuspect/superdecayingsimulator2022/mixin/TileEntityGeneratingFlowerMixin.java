@@ -18,10 +18,27 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import vazkii.botania.api.BotaniaAPI;
 import vazkii.botania.api.subtile.TileEntityGeneratingFlower;
 
+import javax.annotation.Nullable;
+
 @Mixin(TileEntityGeneratingFlower.class)
 public class TileEntityGeneratingFlowerMixin {
 	@Shadow(remap = false) private int mana;
 	@Unique private int manaBeforeAdding;
+	
+	@Unique private GeneratingFlowerType generatingFlowerType;
+	@Unique @Nullable private ForgeConfigSpec.IntValue decayTimeOverride;
+	@Unique @Nullable private ForgeConfigSpec.BooleanValue passiveOverride;
+	
+	@Inject(
+		method = "<init>",
+		remap = false,
+		at = @At("TAIL")
+	)
+	private void onConstruct(TileEntityType<?> type, CallbackInfo ci) {
+		generatingFlowerType = GeneratingFlowerType.TYPE_LOOKUP.get(type);
+		decayTimeOverride = SuperDecayingSimulator2022Config.CONFIG.decayTimeOverride.get(generatingFlowerType);
+		passiveOverride = SuperDecayingSimulator2022Config.CONFIG.passiveOverride.get(generatingFlowerType);
+	}
 	
 	@Inject(
 		method = "addMana",
@@ -42,7 +59,7 @@ public class TileEntityGeneratingFlowerMixin {
 		if(x > 0 && howMuch > 0) {
 			World world = ((TileEntityGeneratingFlower) (Object) this).getWorld();
 			if(world instanceof ServerWorld) {
-				ManaStatsWsd.getFor((ServerWorld) world).track(generatingFlowerType(), howMuch);
+				ManaStatsWsd.getFor((ServerWorld) world).track(generatingFlowerType, howMuch);
 			}
 		}
 	}
@@ -59,9 +76,7 @@ public class TileEntityGeneratingFlowerMixin {
 		)
 	)
 	private boolean isPassiveFlowerRedirect(TileEntityGeneratingFlower tile) {
-		ForgeConfigSpec.BooleanValue b = SuperDecayingSimulator2022Config.CONFIG.passiveOverride.get(generatingFlowerType());
-		if(b != null && b.get()) return true;
-		
+		if(passiveOverride != null && passiveOverride.get()) return true;
 		else return tile.isPassiveFlower();
 	}
 	
@@ -75,17 +90,7 @@ public class TileEntityGeneratingFlowerMixin {
 		)
 	)
 	private int getPassiveFlowerDecayRedirect(BotaniaAPI api) {
-		ForgeConfigSpec.IntValue time = SuperDecayingSimulator2022Config.CONFIG.decayTimeOverride.get(generatingFlowerType());
-		if(time != null) return MathHelper.clamp(time.get(), 0, api.getPassiveFlowerDecay());
-		
+		if(decayTimeOverride != null) return MathHelper.clamp(decayTimeOverride.get(), 0, api.getPassiveFlowerDecay());
 		else return api.getPassiveFlowerDecay();
-	}
-	
-	@Unique
-	private GeneratingFlowerType generatingFlowerType() {
-		TileEntityGeneratingFlower thiss = (TileEntityGeneratingFlower) (Object) this;
-		//noinspection unchecked
-		TileEntityType<? extends TileEntityGeneratingFlower> tileType = (TileEntityType<? extends TileEntityGeneratingFlower>) thiss.getType();
-		return GeneratingFlowerType.TYPE_LOOKUP.get(tileType);
 	}
 }
