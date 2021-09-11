@@ -19,6 +19,8 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Matrix4f;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
+import vazkii.botania.client.core.handler.HUDHandler;
+import vazkii.botania.common.block.ModBlocks;
 import vazkii.botania.common.item.ModItems;
 
 import javax.annotation.Nullable;
@@ -34,36 +36,47 @@ public class ManaStatsGui extends Screen {
 	}
 	
 	private static final ResourceLocation WIDGETS = SuperDecayingSimulator2022.id("textures/gui/mana-stats-widgets.png");
-	private final @Nullable Screen parentScreen;
+	private static final int WIDGETS_WIDTH = 64;
+	private static final int WIDGETS_HEIGHT = 64;
 	
-	private final List<Entry> entries = new ArrayList<>();
 	private static final int ENTRY_HEIGHT = 24;
+	
+	private final @Nullable Screen parentScreen;
+	private final List<Entry> entries = new ArrayList<>();
 	private float listScrollTopY = 0;
-	private float listScrollTopMax;
 	private int maxNameWidth;
+	private int maxPoolsWidth;
 	
 	private void setStats(ManaStatsWsd stats) {
 		entries.clear();
 		stats.table.forEach((type, mana) -> entries.add(new Entry(type, mana)));
 		Collections.sort(entries);
 		
-		if(stats.total != 0) entries.add(new Entry(new StringTextComponent("Total"), new ItemStack(ModItems.lifeEssence), stats.total));
-		
-		//This is called from the constructor so, no convenience fields like "font" are available rn
-		FontRenderer font = Minecraft.getInstance().fontRenderer;
-		maxNameWidth = entries.stream().mapToInt(e -> e.nameWidth(font)).max().orElse(0);
+		if(entries.size() > 0) {
+			entries.add(new Entry(new StringTextComponent("Total"), new ItemStack(ModItems.lifeEssence), stats.total));
+				
+			//This is called from the constructor so, no convenience fields like "font" are available rn
+			FontRenderer font = Minecraft.getInstance().fontRenderer;
+			maxNameWidth = entries.stream().mapToInt(e -> e.nameWidth(font)).max().orElse(0);
+			maxPoolsWidth = entries.stream().mapToInt(e -> e.poolWidth(font)).max().orElse(0);
+		} else {
+			//Crappy hack so the screen isn't 0px wide when there are no flowers to display.
+			maxNameWidth = 100;
+		}
 	}
 	
 	@Override
 	public void render(MatrixStack ms, int mouseX, int mouseY, float partialTicks) {
 		assert minecraft != null;
 		
-		int panelX = 20;
-		int panelY = 20;
-		int panelXMax = width - 20;
-		int panelYMax = height - 20;
-		int panelWidth = panelXMax - panelX;
-		int panelHeight = panelYMax - panelY;
+		//Deeply magical numbers. Do not touch
+		int panelWidth = maxNameWidth + maxPoolsWidth + 172;
+		int panelHeight = MathHelper.clamp(entries.size() * ENTRY_HEIGHT + 36, 50, height - 40);
+		
+		int panelX = width / 2 - panelWidth / 2;
+		int panelY = height / 2 - panelHeight / 2;
+		int panelXMax = width / 2 + panelWidth / 2;
+		int panelYMax = height /2 + panelHeight / 2;
 		
 		int listX = panelX + 10;
 		int listY = panelY + 25; //leave space for the title
@@ -73,8 +86,7 @@ public class ManaStatsGui extends Screen {
 		int listHeight = listYMax - listY;
 		
 		//While I'm here...
-		listScrollTopMax = Math.max(0, entries.size() * ENTRY_HEIGHT - listHeight);
-		listScrollTopY = MathHelper.clamp(listScrollTopY, 0, listScrollTopMax);
+		listScrollTopY = MathHelper.clamp(listScrollTopY, 0, (float) Math.max(0, entries.size() * ENTRY_HEIGHT - listHeight));
 		
 		//Render the gui background and title.
 		renderBackground(ms);
@@ -82,38 +94,50 @@ public class ManaStatsGui extends Screen {
 		
 		//using this instead of drawCenteredString so there's no drop shadow.
 		IReorderingProcessor bababa = getTitle().func_241878_f();
-		font.func_243248_b(ms, getTitle(), width / 2f - (font.func_243245_a(bababa) / 2f), 27, 0x404040);
+		font.func_243248_b(ms, getTitle(), width / 2f - (font.func_243245_a(bababa) / 2f), panelY + 7, 0x404040);
 		
-		//Draw the list widget. first, scissor to its dimensions
-		if(listWidth < 1 || listHeight < 1) return; //scissor breaks for negative sizes. +1 for some fudge.
-		double s = minecraft.getMainWindow().getGuiScaleFactor();
-		//yeah scissor is weird dude
-		RenderSystem.enableScissor((int) (listX * s),     (int) (minecraft.getMainWindow().getFramebufferHeight() - (listYMax * s)),
-		                           (int) (listWidth * s), (int) (listHeight * s));
-		
-		for(int index = 0; index < entries.size(); index++) {
-			Entry entry = entries.get(index);
+		if(entries.size() > 0) {
+			//Draw the list widget. first, scissor to its dimensions
+			if(listWidth < 1 || listHeight < 1) return; //scissor breaks for negative sizes. +1 for some fudge.
+			double s = minecraft.getMainWindow().getGuiScaleFactor();
+			//yeah scissor is weird dude
+			RenderSystem.enableScissor((int) (listX * s), (int) (minecraft.getMainWindow().getFramebufferHeight() - (listYMax * s)),
+				(int) (listWidth * s), (int) (listHeight * s));
 			
-			//the +1s are to fudge things a bit since slot backgrounds are a little oversized.
-			//also; only scroll upwards in scaled-pixel increments, mainly because items can only be drawn at integer coordinates for some reason
-			int entryY = (int) (listY + (index * ENTRY_HEIGHT) - listScrollTopY + 1);
-			int x = listX + 1;
+			for(int index = 0; index < entries.size(); index++) {
+				Entry entry = entries.get(index);
+				
+				//the +1s are to fudge things a bit, since slot backgrounds are a little oversized & it has to fit in the scissor.
+				//also; only scroll upwards in scaled-pixel increments, (i.e. `y` is an integer and not a float)
+				//mainly because item rendering machinery only accepts integer coordinates for some reason
+				int x = listX + 1;
+				int y = (int) (listY + (index * ENTRY_HEIGHT) - listScrollTopY + 1);
+				
+				//flower icon
+				renderSlotBackground(ms, x - 1, y - 1);
+				minecraft.getItemRenderer().renderItemAndEffectIntoGUI(entry.icon, x, y);
+				x += 22;
+				
+				//label
+				font.func_243248_b(ms, entry.text, x, y + 4, 0x404040);
+				x += maxNameWidth + 10;
+				
+				//how many mana pools total
+				x += maxPoolsWidth / 2;
+				renderManaPoolIcon(ms, x - 8.5f, y);
+				
+				font.drawStringWithShadow(ms, entry.pools, x - (font.getStringWidth(entry.pools) / 2f), y + 4, 0xffffff);
+				x += maxPoolsWidth / 2 + 10;
+				
+				//leftover portion
+				HUDHandler.renderManaBar(ms, x, y + 5, 0x4444ff, 1f, entry.fraction, 1_000_000);
+			}
 			
-			//flower icon
-			renderSlotBackground(ms, x - 1, ((int) entryY) - 1);
-			minecraft.getItemRenderer().renderItemAndEffectIntoGUI(entry.icon, x, (int) entryY); //lol @ having to round the position
-			x += 22;
-			
-			//label
-			font.func_243248_b(ms, entry.text, x, entryY + 4, 0x404040);
-			x += maxNameWidth + 5;
-			
-			//how much mana
-			font.drawString(ms, Long.toString(entry.amount), x, entryY + 4, 0x303030);
+			//remember to pop the scissor!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+			RenderSystem.disableScissor();
+		} else {
+			drawCenteredString(ms, font, "No mana has been generated yet!", width / 2, height / 2, 0xffffff);
 		}
-		
-		//remember to pop the scissor!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-		RenderSystem.disableScissor();
 	}
 	
 	static class Entry implements Comparable<Entry> {
@@ -124,15 +148,22 @@ public class ManaStatsGui extends Screen {
 		public Entry(ITextComponent text, ItemStack icon, long amount) {
 			this.text = text;
 			this.icon = icon;
-			this.amount = amount;
+			
+			this.pools = Long.toString(amount / 1_000_000L);
+			this.fraction = (int) (amount % 1_000_000);
 		}
 		
 		private final ITextComponent text;
 		private final ItemStack icon;
-		private final long amount;
+		private final String pools; //Lmao long
+		private final int fraction;
 		
 		int nameWidth(FontRenderer font) {
 			return font.func_243245_a(text.func_241878_f());
+		}
+		
+		int poolWidth(FontRenderer font) {
+			return font.getStringWidth(pools);
 		}
 		
 		@Override
@@ -141,8 +172,22 @@ public class ManaStatsGui extends Screen {
 		}
 	}
 	
+	private void renderManaPoolIcon(MatrixStack ms, float x, float y) {
+		assert minecraft != null;
+		minecraft.getTextureManager().bindTexture(WIDGETS);
+		
+		RenderSystem.enableBlend();
+		RenderSystem.defaultBlendFunc(); //renderButton has these, idk if it's important
+		RenderSystem.enableDepthTest();
+		
+		//The mana pool icon is at u 0px, v 32px in the texture, and is 32px square.
+		//If you're wondering why I use a texture instead of rendering a real item,
+		//I couldn't figure out how to make the text appear above the item...
+		//Also i want it to be a little bit transparent.
+		blit0(ms, x, x + 16, y, y + 16, 0, 32, 32, 64);
+	}
+	
 	private void renderSlotBackground(MatrixStack ms, float x, float y) {
-		//I pasted one into this texture
 		assert minecraft != null;
 		minecraft.getTextureManager().bindTexture(WIDGETS);
 		
@@ -167,7 +212,6 @@ public class ManaStatsGui extends Screen {
 		RenderSystem.enableDepthTest();
 		
 		//NB:
-		// the 32/64f in blit0 come from the size of the texture;
 		// the 6s are because the ninepatch portion of the texture is 18x18 with nine 6x6 cells;
 		// The 6 in blit0 correspond to the 6s here, only because i want to draw the texture at 1x size.
 		
@@ -191,12 +235,14 @@ public class ManaStatsGui extends Screen {
 		//678
 		int u = (cellSelect % 3) * 6;
 		int v = (cellSelect / 3) * 6;
-		innerBlit(ms.getLast().getMatrix(), x1, x2, y1, y2, getBlitOffset(), u / 64f, (u + 6) / 64f, v / 32f, (v + 6) / 32f);
+		innerBlit(ms.getLast().getMatrix(), x1, x2, y1, y2, getBlitOffset(),
+			(float) u / WIDGETS_WIDTH, (float) (u + 6) / WIDGETS_WIDTH, (float) v / WIDGETS_HEIGHT, (float) (v + 6) / WIDGETS_HEIGHT);
 	}
 	
 	@SuppressWarnings("SameParameterValue")
 	private void blit0(MatrixStack ms, float x1, float x2, float y1, float y2, int u1Px, int u2Px, int v1Px, int v2Px) {
-		innerBlit(ms.getLast().getMatrix(), x1, x2, y1, y2, getBlitOffset(), u1Px / 64f, u2Px / 64f, v1Px / 32f, v2Px / 32f);
+		innerBlit(ms.getLast().getMatrix(), x1, x2, y1, y2, getBlitOffset(),
+			(float) u1Px / WIDGETS_WIDTH, (float) u2Px / WIDGETS_WIDTH, (float) v1Px / WIDGETS_HEIGHT, (float) v2Px / WIDGETS_HEIGHT);
 	}
 	
 	//Copypasted out of AbstractGui because lol private.
