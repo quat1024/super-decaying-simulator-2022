@@ -36,8 +36,10 @@ public class TileEntityGeneratingFlowerMixin {
 	)
 	private void onConstruct(TileEntityType<?> type, CallbackInfo ci) {
 		generatingFlowerType = GeneratingFlowerType.TYPE_LOOKUP.get(type);
-		decayTimeOverride = SuperDecayingSimulator2022Config.CONFIG.decayTimeOverride.get(generatingFlowerType);
-		passiveOverride = SuperDecayingSimulator2022Config.CONFIG.passiveOverride.get(generatingFlowerType);
+		if(SuperDecayingSimulator2022Config.CONFIG != null) {
+			decayTimeOverride = SuperDecayingSimulator2022Config.CONFIG.decayTimeOverride.get(generatingFlowerType);
+			passiveOverride = SuperDecayingSimulator2022Config.CONFIG.passiveOverride.get(generatingFlowerType);
+		}
 	}
 	
 	@Inject(
