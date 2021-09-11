@@ -10,7 +10,6 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import vazkii.botania.common.block.ModSubtiles;
 
-import java.util.Collections;
 import java.util.function.Consumer;
 
 @Mod(SuperDecayingSimulator2022.MODID)
@@ -24,7 +23,7 @@ public class SuperDecayingSimulator2022 {
 	
 	public SuperDecayingSimulator2022() {
 		registerGeneratingFlowers(GeneratingFlowerType::register);
-		Collections.sort(GeneratingFlowerType.ALL_TYPES);
+		GeneratingFlowerType.allDoneRegistering();
 		
 		//Can't do this in common setup because the config just.. doesnt.... show up???
 		ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, SuperDecayingSimulator2022Config.buildSpecAndSetInstance());

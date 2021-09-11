@@ -21,6 +21,7 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Matrix4f;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import vazkii.botania.client.core.handler.HUDHandler;
 import vazkii.botania.common.item.ModItems;
 
@@ -31,7 +32,7 @@ import java.util.List;
 
 public class ManaStatsGui extends Screen {
 	public ManaStatsGui(@Nullable ManaStatsWsd stats) {
-		super(new StringTextComponent("Mana Stats"));
+		super(new TranslationTextComponent("gui.super-decaying-simulator-2022.mana-stats"));
 		if(stats != null) setStats(stats);
 	}
 	
@@ -49,19 +50,16 @@ public class ManaStatsGui extends Screen {
 	public void setStats(ManaStatsWsd stats) {
 		entries = new ArrayList<>();
 		
-		stats.table.forEach((type, mana) -> entries.add(new Entry(type, mana)));
-		Collections.sort(entries);
-		
-		if(entries.size() > 0) {
-			entries.add(new Entry(new StringTextComponent("Total"), new ItemStack(ModItems.lifeEssence), stats.total));
+		if(stats.table.size() > 0) {
+			stats.table.forEach((type, mana) -> entries.add(new Entry(type, mana)));
+			Collections.sort(entries);
+			
+			entries.add(new Entry(new StringTextComponent("Total"), ItemStack.EMPTY, stats.total));
 				
 			//This is called from the constructor so, no convenience fields like "font" are available rn
 			FontRenderer font = Minecraft.getInstance().fontRenderer;
 			maxNameWidth = entries.stream().mapToInt(e -> e.nameWidth(font)).max().orElse(0);
 			maxPoolsWidth = entries.stream().mapToInt(e -> e.poolWidth(font)).max().orElse(0);
-		} else {
-			//Crappy hack so the screen isn't 0px wide when there are no flowers to display.
-			maxNameWidth = 100;
 		}
 	}
 	
@@ -108,7 +106,7 @@ public class ManaStatsGui extends Screen {
 		font.func_243248_b(ms, getTitle(), width / 2f - (font.func_243245_a(bababa) / 2f), panelY + 7, 0x404040);
 		
 		if(entries == null) {
-			drawCenteredString(ms, font, "Waiting for server...", width / 2, height / 2, 0xffffff);
+			drawCenteredString(ms, font, new TranslationTextComponent("gui.super-decaying-simulator-2022.mana-stats.waiting"), width / 2, height / 2, 0xffffff);
 		} else if(entries.size() > 0) {
 			//While I'm here...
 			listScrollTopY = MathHelper.clamp(listScrollTopY, 0, (float) Math.max(0, entries.size() * ENTRY_HEIGHT - listHeight));
@@ -130,8 +128,10 @@ public class ManaStatsGui extends Screen {
 				int y = (int) (listY + (index * ENTRY_HEIGHT) - listScrollTopY + 1);
 				
 				//flower icon
-				renderSlotBackground(ms, x - 1, y - 1);
-				minecraft.getItemRenderer().renderItemAndEffectIntoGUI(entry.icon, x, y);
+				if(!entry.icon.isEmpty()) {
+					renderSlotBackground(ms, x - 1, y - 1);
+					minecraft.getItemRenderer().renderItemAndEffectIntoGUI(entry.icon, x, y);
+				}
 				x += 22;
 				
 				//label
@@ -152,13 +152,13 @@ public class ManaStatsGui extends Screen {
 			//remember to pop the scissor!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 			RenderSystem.disableScissor();
 		} else {
-			drawCenteredString(ms, font, "No mana has been generated yet!", width / 2, height / 2, 0xffffff);
+			drawCenteredString(ms, font, new TranslationTextComponent("gui.super-decaying-simulator-2022.mana-stats.nothing"), width / 2, height / 2, 0xffffff);
 		}
 	}
 	
 	static class Entry implements Comparable<Entry> {
 		Entry(GeneratingFlowerType type, long amount) {
-			this(type.representative.getTranslatedName(), new ItemStack(type.representative), amount);
+			this(type.toText(), type.asItemStack(), amount);
 		}
 		
 		public Entry(ITextComponent text, ItemStack icon, long amount) {

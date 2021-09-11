@@ -1,0 +1,14 @@
+{
+	"key.super-decaying-simulator-2022.open-stats-gui": "(sdss2022) View Statistics",
+	
+	"gui.super-decaying-simulator-2022.mana-stats": "Mana Stats",
+	"gui.super-decaying-simulator-2022.mana-stats.waiting": "Waiting for server...",
+	"gui.super-decaying-simulator-2022.mana-stats.nothing": "No mana has been generated yet!",
+	
+	"super-decaying-simulator-2022.unknown-flower": "Other",
+	
+	"command.super-decaying-simulator-2022.no_flower": "No flower named %s",
+	"command.super-decaying-simulator-2022.stats.show": "%s - %s",
+	"command.super-decaying-simulator-2022.stats.reset-one": "Reset mana statistics for flower %s",
+	"command.super-decaying-simulator-2022.stats.reset-all": "Reset all mana statistics"
+}
