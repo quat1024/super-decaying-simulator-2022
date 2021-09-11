@@ -3,6 +3,7 @@ package agency.highlysuspect.superdecayingsimulator2022.client;
 import agency.highlysuspect.superdecayingsimulator2022.GeneratingFlowerType;
 import agency.highlysuspect.superdecayingsimulator2022.ManaStatsWsd;
 import agency.highlysuspect.superdecayingsimulator2022.SuperDecayingSimulator2022;
+import agency.highlysuspect.superdecayingsimulator2022.SuperDecayingSimulator2022NetworkHandler;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
@@ -13,6 +14,7 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldVertexBufferUploader;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.item.ItemStack;
+import net.minecraft.server.integrated.IntegratedServer;
 import net.minecraft.util.IReorderingProcessor;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
@@ -20,7 +22,6 @@ import net.minecraft.util.math.vector.Matrix4f;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import vazkii.botania.client.core.handler.HUDHandler;
-import vazkii.botania.common.block.ModBlocks;
 import vazkii.botania.common.item.ModItems;
 
 import javax.annotation.Nullable;
@@ -29,10 +30,9 @@ import java.util.Collections;
 import java.util.List;
 
 public class ManaStatsGui extends Screen {
-	public ManaStatsGui(@Nullable Screen parent, ManaStatsWsd stats) {
+	public ManaStatsGui(@Nullable ManaStatsWsd stats) {
 		super(new StringTextComponent("Mana Stats"));
-		this.parentScreen = parent;
-		setStats(stats);
+		if(stats != null) setStats(stats);
 	}
 	
 	private static final ResourceLocation WIDGETS = SuperDecayingSimulator2022.id("textures/gui/mana-stats-widgets.png");
@@ -41,14 +41,14 @@ public class ManaStatsGui extends Screen {
 	
 	private static final int ENTRY_HEIGHT = 24;
 	
-	private final @Nullable Screen parentScreen;
-	private final List<Entry> entries = new ArrayList<>();
+	private List<Entry> entries = null;
 	private float listScrollTopY = 0;
 	private int maxNameWidth;
 	private int maxPoolsWidth;
 	
-	private void setStats(ManaStatsWsd stats) {
-		entries.clear();
+	public void setStats(ManaStatsWsd stats) {
+		entries = new ArrayList<>();
+		
 		stats.table.forEach((type, mana) -> entries.add(new Entry(type, mana)));
 		Collections.sort(entries);
 		
@@ -66,12 +66,26 @@ public class ManaStatsGui extends Screen {
 	}
 	
 	@Override
+	public void tick() {
+		//If the player is running an integrated server, well, the data's right here, might as well take it.
+		assert minecraft != null;
+		IntegratedServer server = minecraft.getIntegratedServer();
+		if(server != null) setStats(ManaStatsWsd.getFor(server));
+	}
+	
+	@Override
 	public void render(MatrixStack ms, int mouseX, int mouseY, float partialTicks) {
 		assert minecraft != null;
 		
-		//Deeply magical numbers. Do not touch
-		int panelWidth = maxNameWidth + maxPoolsWidth + 172;
-		int panelHeight = MathHelper.clamp(entries.size() * ENTRY_HEIGHT + 36, 50, height - 40);
+		int panelWidth, panelHeight;
+		if(entries == null || entries.size() == 0) {
+			panelWidth = 270;
+			panelHeight = 50;
+		} else {
+			//Deeply magical numbers. Do not touch
+			panelWidth = maxNameWidth + maxPoolsWidth + 172;
+			panelHeight = MathHelper.clamp(entries.size() * ENTRY_HEIGHT + 36, 50, height - 40);
+		}
 		
 		int panelX = width / 2 - panelWidth / 2;
 		int panelY = height / 2 - panelHeight / 2;
@@ -85,9 +99,6 @@ public class ManaStatsGui extends Screen {
 		int listWidth = listXMax - listX;
 		int listHeight = listYMax - listY;
 		
-		//While I'm here...
-		listScrollTopY = MathHelper.clamp(listScrollTopY, 0, (float) Math.max(0, entries.size() * ENTRY_HEIGHT - listHeight));
-		
 		//Render the gui background and title.
 		renderBackground(ms);
 		renderNinepatchBackground(ms, panelX, panelXMax, panelY, panelYMax);
@@ -96,7 +107,12 @@ public class ManaStatsGui extends Screen {
 		IReorderingProcessor bababa = getTitle().func_241878_f();
 		font.func_243248_b(ms, getTitle(), width / 2f - (font.func_243245_a(bababa) / 2f), panelY + 7, 0x404040);
 		
-		if(entries.size() > 0) {
+		if(entries == null) {
+			drawCenteredString(ms, font, "Waiting for server...", width / 2, height / 2, 0xffffff);
+		} else if(entries.size() > 0) {
+			//While I'm here...
+			listScrollTopY = MathHelper.clamp(listScrollTopY, 0, (float) Math.max(0, entries.size() * ENTRY_HEIGHT - listHeight));
+			
 			//Draw the list widget. first, scissor to its dimensions
 			if(listWidth < 1 || listHeight < 1) return; //scissor breaks for negative sizes. +1 for some fudge.
 			double s = minecraft.getMainWindow().getGuiScaleFactor();
@@ -273,7 +289,18 @@ public class ManaStatsGui extends Screen {
 	}
 	
 	@Override
+	public boolean isPauseScreen() {
+		return false;
+	}
+	
+	@Override
 	public void closeScreen() {
-		if(minecraft != null)	minecraft.displayGuiScreen(parentScreen);
+		super.closeScreen();
+		
+		if(minecraft != null && minecraft.getConnection() != null) {
+			//Tell the server that i closed the screen, so it'll stop sending me updates.
+			SuperDecayingSimulator2022NetworkHandler.CHANNEL.sendToServer(
+				new SuperDecayingSimulator2022NetworkHandler.C2SSetGuiStatus(false));
+		}
 	}
 }

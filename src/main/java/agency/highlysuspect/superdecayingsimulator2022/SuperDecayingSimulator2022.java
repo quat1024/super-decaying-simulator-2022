@@ -1,8 +1,10 @@
 package agency.highlysuspect.superdecayingsimulator2022;
 
+import agency.highlysuspect.superdecayingsimulator2022.client.SuperDecayingSimulator2022ClientProxy;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegisterCommandsEvent;
+import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
@@ -15,19 +17,25 @@ import java.util.function.Consumer;
 public class SuperDecayingSimulator2022 {
 	public static final String MODID = "super-decaying-simulator-2022";
 	
-	public static ResourceLocation id(String path) {
-		return new ResourceLocation(MODID, path);
-	} 
+	//god i fucking hate proxies
+	public static final SuperDecayingSimulator2022Proxy PROXY = DistExecutor.safeRunForDist(
+		() -> SuperDecayingSimulator2022ClientProxy::new,
+		() -> SuperDecayingSimulator2022Proxy.Server::new);
 	
 	public SuperDecayingSimulator2022() {
 		registerGeneratingFlowers(GeneratingFlowerType::register);
-		
 		Collections.sort(GeneratingFlowerType.ALL_TYPES);
 		
 		//Can't do this in common setup because the config just.. doesnt.... show up???
 		ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, SuperDecayingSimulator2022Config.buildSpecAndSetInstance());
 		
 		MinecraftForge.EVENT_BUS.addListener((RegisterCommandsEvent e) -> SuperDecayingSimulator2022Commands.register(e.getDispatcher()));
+		SuperDecayingSimulator2022NetworkHandler.initialize();
+		PROXY.initalize();
+	}
+	
+	public static ResourceLocation id(String path) {
+		return new ResourceLocation(MODID, path);
 	}
 	
 	public static void registerGeneratingFlowers(Consumer<GeneratingFlowerType> c) {

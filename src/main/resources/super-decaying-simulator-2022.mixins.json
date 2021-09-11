@@ -5,7 +5,8 @@
 	"package": "agency.highlysuspect.superdecayingsimulator2022.mixin",
 	"refmap": "super-decaying-simulator-2022.refmap.json",
 	"mixins": [
-		"TileEntityGeneratingFlowerMixin"
+		"TileEntityGeneratingFlowerMixin",
+		"ServerPlayNetHandlerMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

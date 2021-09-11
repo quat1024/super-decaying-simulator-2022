@@ -9,7 +9,9 @@ import com.mojang.brigadier.suggestion.SuggestionProvider;
 import net.minecraft.client.Minecraft;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.ISuggestionProvider;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraftforge.fml.network.PacketDistributor;
 
 import static net.minecraft.command.Commands.argument;
 import static net.minecraft.command.Commands.literal;
@@ -84,9 +86,13 @@ public class SuperDecayingSimulator2022Commands {
 	
 	private static ArgumentBuilder<CommandSource, ?> statsGui(ArgumentBuilder<CommandSource, ?> a) {
 		return a.executes(ctx -> {
-			//TODO LOOOOL obviously this is not multiplayer safe
 			ManaStatsWsd stats = ManaStatsWsd.getFor(ctx);
-			Minecraft.getInstance().displayGuiScreen(new ManaStatsGui(Minecraft.getInstance().currentScreen, stats));
+			ServerPlayerEntity player = ctx.getSource().asPlayer();
+			
+			//Beginning to regret this mod name.
+			SuperDecayingSimulator2022NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> player),
+				new SuperDecayingSimulator2022NetworkHandler.S2COpenOrUpdateGui(stats, true));
+			
 			return 0;
 		});
 	}
