@@ -1,5 +1,6 @@
 package agency.highlysuspect.superdecayingsimulator2022;
 
+import agency.highlysuspect.superdecayingsimulator2022.advancement.SuperDecayingSimulator2022AdvancementTriggers;
 import agency.highlysuspect.superdecayingsimulator2022.client.SuperDecayingSimulator2022ClientProxy;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
@@ -29,7 +30,8 @@ public class SuperDecayingSimulator2022 {
 		ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, SuperDecayingSimulator2022Config.buildSpecAndSetInstance());
 		
 		MinecraftForge.EVENT_BUS.addListener((RegisterCommandsEvent e) -> SuperDecayingSimulator2022Commands.register(e.getDispatcher()));
-		SuperDecayingSimulator2022NetworkHandler.initialize();
+		SuperDecayingSimulator2022NetworkHandler.onInitialize();
+		SuperDecayingSimulator2022AdvancementTriggers.onInitialize();
 		PROXY.initalize();
 	}
 	

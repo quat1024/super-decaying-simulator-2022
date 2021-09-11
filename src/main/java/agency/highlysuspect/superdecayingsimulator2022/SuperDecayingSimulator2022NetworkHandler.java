@@ -7,6 +7,7 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.World;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
@@ -31,8 +32,7 @@ public class SuperDecayingSimulator2022NetworkHandler {
 		.serverAcceptedVersions(PROTOCOL::equals)
 		.simpleChannel();
 	
-	@SuppressWarnings("ConstantConditions") //in the packet handler; pretty sure the Overworld exists.
-	public static void initialize() {
+	public static void onInitialize() {
 		CHANNEL.messageBuilder(S2COpenOrUpdateGui.class, 0, NetworkDirection.PLAY_TO_CLIENT)
 			.encoder(S2COpenOrUpdateGui::encode)
 			.decoder(S2COpenOrUpdateGui::new)
@@ -50,11 +50,16 @@ public class SuperDecayingSimulator2022NetworkHandler {
 				//What the fuck, Forge's ServerTickEvent doesn't provide access to the fucking server, hahaha
 				MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
 				
-				//Every half-second or so, if there are any players with the mana stats gui open, send them an update packet
-				if(server.getWorld(World.OVERWORLD).getGameTime() % 10 != 0) return;
+				//Every 10 ticks or so, if players have the stats gui open, send them an update.
+				ServerWorld overworld = server.getWorld(World.OVERWORLD);
+				assert overworld != null; //Sure hope so!
+				if(overworld.getGameTime() % 10 != 0) return;
+				
+				ManaStatsWsd stats = ManaStatsWsd.getFor(overworld);
+				
 				for(ServerPlayerEntity player : server.getPlayerList().getPlayers())
 					if(((ServerPlayNetHandlerExt) player.connection).sds2022$hasStatsGuiOpened())
-						CHANNEL.send(PacketDistributor.PLAYER.with(() -> player), new S2COpenOrUpdateGui(ManaStatsWsd.getFor(player.getServerWorld()), false));
+						CHANNEL.send(PacketDistributor.PLAYER.with(() -> player), new S2COpenOrUpdateGui(stats, false));
 			}
 		});
 	}
