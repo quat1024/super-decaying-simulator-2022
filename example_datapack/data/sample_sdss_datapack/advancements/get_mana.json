@@ -1,0 +1,34 @@
+{
+	"parent": "botania:main/root",
+	"display": {
+		"icon": {
+			"item": "botania:mana_pool"
+		},
+		"title": {
+			"text": "Get Mana"
+		},
+		"description": {
+			"text": "You got 50 mana!!!!!"
+		},
+		"frame": "challenge",
+		"show_toast": true,
+		"announce_to_chat": true,
+		"hidden": false
+	},
+	"rewards": {
+		"experience": 500000
+	},
+	"criteria": {
+		"got_mana": {
+			"trigger": "super-decaying-simulator-2022:generated_mana",
+			"conditions": {
+				"mana": 50
+			}
+		}
+	},
+	"requirements": [
+		[
+			"got_mana"
+		]
+	]
+}

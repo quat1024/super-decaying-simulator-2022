@@ -1,0 +1,35 @@
+{
+	"parent": "botania:main/root",
+	"display": {
+		"icon": {
+			"item": "botania:endoflame"
+		},
+		"title": {
+			"text": "Get Endoflame Mana"
+		},
+		"description": {
+			"text": "You got 50 mana with an endoflame!!!!!!"
+		},
+		"frame": "challenge",
+		"show_toast": true,
+		"announce_to_chat": true,
+		"hidden": false
+	},
+	"rewards": {
+		"experience": 500000
+	},
+	"criteria": {
+		"got_mana": {
+			"trigger": "super-decaying-simulator-2022:generated_mana",
+			"conditions": {
+				"mana": 50,
+				"flower": "endoflame"
+			}
+		}
+	},
+	"requirements": [
+		[
+			"got_mana"
+		]
+	]
+}

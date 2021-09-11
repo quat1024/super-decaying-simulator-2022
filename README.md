@@ -29,6 +29,8 @@ An advancement criterion is available for rewarding players when the amount of g
   * Every player will earn the advancements at the same time, and a player logging in after a mana goal has been reached will immediately earn the advancement.
 * Advancement criterions are checked every 5 seconds, to avoid bogging down the server too much. This is configurable.
 
+A worked example datapack is in the `example_datapack` folder of this repo.
+
 The criterion is named `super-decaying-simulator-2022:generated_mana` (note dashes vs. underscore). Its conditions:
 
 * `flower` - optional string
