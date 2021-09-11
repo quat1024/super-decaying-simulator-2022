@@ -86,7 +86,7 @@ public class SuperDecayingSimulator2022Commands {
 		return a.executes(ctx -> {
 			//TODO LOOOOL obviously this is not multiplayer safe
 			ManaStatsWsd stats = ManaStatsWsd.getFor(ctx);
-			Minecraft.getInstance().displayGuiScreen(new ManaStatsGui());
+			Minecraft.getInstance().displayGuiScreen(new ManaStatsGui(Minecraft.getInstance().currentScreen, stats));
 			return 0;
 		});
 	}

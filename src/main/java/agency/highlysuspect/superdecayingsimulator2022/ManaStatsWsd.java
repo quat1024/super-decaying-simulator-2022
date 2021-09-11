@@ -1,16 +1,12 @@
 package agency.highlysuspect.superdecayingsimulator2022;
 
 import com.mojang.brigadier.context.CommandContext;
-import it.unimi.dsi.fastutil.longs.LongCollection;
-import it.unimi.dsi.fastutil.longs.LongIterator;
 import it.unimi.dsi.fastutil.objects.Object2LongOpenHashMap;
 import net.minecraft.command.CommandSource;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraft.world.storage.WorldSavedData;
-
-import java.util.function.LongBinaryOperator;
 
 public class ManaStatsWsd extends WorldSavedData {
 	public ManaStatsWsd() {
