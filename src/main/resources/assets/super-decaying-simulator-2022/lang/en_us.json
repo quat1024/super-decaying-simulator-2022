@@ -7,8 +7,6 @@
 	
 	"super-decaying-simulator-2022.unknown-flower": "Other",
 	
-	"command.super-decaying-simulator-2022.no_flower": "No flower named %s",
 	"command.super-decaying-simulator-2022.stats.show": "%s - %s",
-	"command.super-decaying-simulator-2022.stats.reset-one": "Reset mana statistics for flower %s",
-	"command.super-decaying-simulator-2022.stats.reset-all": "Reset all mana statistics"
+	"command.super-decaying-simulator-2022.stats.reset-all": "Reset mana statistics"
 }

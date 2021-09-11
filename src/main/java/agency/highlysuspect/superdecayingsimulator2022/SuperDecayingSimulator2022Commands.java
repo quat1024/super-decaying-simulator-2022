@@ -1,18 +1,13 @@
 package agency.highlysuspect.superdecayingsimulator2022;
 
 import com.mojang.brigadier.CommandDispatcher;
-import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
-import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
-import com.mojang.brigadier.suggestion.SuggestionProvider;
 import net.minecraft.command.CommandSource;
-import net.minecraft.command.ISuggestionProvider;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.fml.network.PacketDistributor;
 
-import static net.minecraft.command.Commands.argument;
 import static net.minecraft.command.Commands.literal;
 
 public class SuperDecayingSimulator2022Commands {
@@ -23,47 +18,31 @@ public class SuperDecayingSimulator2022Commands {
 		);
 	}
 	
-	private static final SuggestionProvider<CommandSource> SUGGEST_GENERATING_FLOWER_NAMES = (context, builder) -> ISuggestionProvider.suggest(GeneratingFlowerType.allNames().stream(), builder);
+	//Unused rn, string arguments acted kinda funky and the commands didnt work
+	//private static final DynamicCommandExceptionType NOT_FLOWER = new DynamicCommandExceptionType(a -> new TranslationTextComponent("command.super-decaying-simulator-2022.no_flower", a));
+	//private static final SuggestionProvider<CommandSource> SUGGEST_GENERATING_FLOWER_NAMES = (context, builder) -> ISuggestionProvider.suggest(GeneratingFlowerType.allNames().stream(), builder);
 	
 	private static ArgumentBuilder<CommandSource, ?> stats() {
 		return literal("stats")
-			.then(statsShowAll(literal("show-all")))
-			.then(statsShowOne(literal("show")))
-			.then(statsResetAll(literal("reset-all").requires(src -> src.hasPermissionLevel(2))))
-			.then(statsResetOne(literal("reset").requires(src -> src.hasPermissionLevel(2))))
-			.then(statsGui(literal("gui")));
+			.then(statsShowAll())
+			.then(statsResetAll().requires(s -> s.hasPermissionLevel(2)))
+			.then(statsOpenGui());
 	}
 	
 	private static void doShow(CommandContext<CommandSource> ctx, GeneratingFlowerType type, long mana) {
 		ctx.getSource().sendFeedback(new TranslationTextComponent("command.super-decaying-simulator-2022.stats.show", type.toText(), mana), true);
 	}
 	
-	private static ArgumentBuilder<CommandSource, ?> statsShowAll(ArgumentBuilder<CommandSource, ?> a) {
-		return a.executes(ctx -> {
+	private static ArgumentBuilder<CommandSource, ?> statsShowAll() {
+		return literal("show").executes(ctx -> {
 			ManaStatsWsd stats = ManaStatsWsd.getFor(ctx);
 			stats.table.forEach((type, mana) -> doShow(ctx, type, mana));
 			return (int) stats.total();
 		});
 	}
 	
-	private static final DynamicCommandExceptionType NOT_FLOWER = new DynamicCommandExceptionType(a -> new TranslationTextComponent("command.super-decaying-simulator-2022.no_flower", a));
-	private static ArgumentBuilder<CommandSource, ?> statsShowOne(ArgumentBuilder<CommandSource, ?> a) {
-		return a
-			.then(argument("which", StringArgumentType.string()).suggests(SUGGEST_GENERATING_FLOWER_NAMES))
-			.executes(ctx -> {
-				ManaStatsWsd stats = ManaStatsWsd.getFor(ctx);
-				String yeah = StringArgumentType.getString(ctx, "which");
-				GeneratingFlowerType type = GeneratingFlowerType.byName(yeah);
-				if(type == null) throw NOT_FLOWER.create(yeah);
-				
-				long mana = stats.get(type);
-				doShow(ctx, type, mana);
-				return (int) mana;
-			});
-	}
-	
-	private static ArgumentBuilder<CommandSource, ?> statsResetAll(ArgumentBuilder<CommandSource, ?> a) {
-		return a
+	private static ArgumentBuilder<CommandSource, ?> statsResetAll() {
+		return literal("reset")
 			.requires(src -> src.hasPermissionLevel(2))
 			.executes(ctx -> {
 				ManaStatsWsd stats = ManaStatsWsd.getFor(ctx);
@@ -73,23 +52,8 @@ public class SuperDecayingSimulator2022Commands {
 			});
 	}
 	
-	private static ArgumentBuilder<CommandSource, ?> statsResetOne(ArgumentBuilder<CommandSource, ?> a) {
-		return a
-			.then(argument("which", StringArgumentType.string()).suggests(SUGGEST_GENERATING_FLOWER_NAMES))
-			.executes(ctx -> {
-				ManaStatsWsd stats = ManaStatsWsd.getFor(ctx);
-				String yeah = StringArgumentType.getString(ctx, "which");
-				GeneratingFlowerType type = GeneratingFlowerType.byName(yeah);
-				if(type == null) throw NOT_FLOWER.create(yeah);
-				
-				stats.reset(type);
-				ctx.getSource().sendFeedback(new TranslationTextComponent("command.super-decaying-simulator-2022.stats.reset-one", type.toText()), true);
-				return (int) stats.total();
-			});
-	}
-	
-	private static ArgumentBuilder<CommandSource, ?> statsGui(ArgumentBuilder<CommandSource, ?> a) {
-		return a.executes(ctx -> {
+	private static ArgumentBuilder<CommandSource, ?> statsOpenGui() {
+		return literal("gui").executes(ctx -> {
 			ManaStatsWsd stats = ManaStatsWsd.getFor(ctx);
 			ServerPlayerEntity player = ctx.getSource().asPlayer();
 			
