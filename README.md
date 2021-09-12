@@ -2,6 +2,8 @@
 
 A port of the flower-decay and mana stats features from Botania Tweaks 1.12, for Forge 1.16.
 
+(LGPL 3 or later.)
+
 # Flower Decay
 
 Edit `super-decaying-simulator-2022-common.toml`. You can:
