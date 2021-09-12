@@ -1,6 +1,6 @@
 # Super Decaying Simulator 2022
 
-A port of the flower-decay and mana stats features from Botania Tweaks 1.12, now for Forge 1.16.
+A port of the flower-decay and mana stats features from Botania Tweaks 1.12, for Forge 1.16.
 
 # Flower Decay
 
@@ -9,9 +9,9 @@ Edit `super-decaying-simulator-2022-common.toml`. You can:
 * make any generating flower experience passive decay;
 * set the decay time per-flower.
 
-The Hydroangeas can't be made *not* passive, and its decay time can't be set longer than the default of 72000 ticks :), but everything else is fair game.
+The Hydroangeas can't be made *not* passive, and its decay time can't be set longer than the default of 72000 ticks :) But everything else is fair game.
 
-Addon flowers get piled together under `other_flowers`. This is a hack; get in touch if you want something better.
+Addon flowers get piled together under `other_flowers`, this is a hack, get in touch if you want something better.
 
 # Mana Statistics
 
@@ -29,7 +29,7 @@ An advancement criterion is available for rewarding players when the amount of g
   * Every player will earn the advancements at the same time, and a player logging in after a mana goal has been reached will immediately earn the advancement.
 * Advancement criterions are checked every 5 seconds, to avoid bogging down the server too much. This is configurable.
 
-A worked example datapack is in the `example_datapack` folder of this repo.
+*A worked example datapack is in the `example_datapack` folder of this repo btw*
 
 The criterion is named `super-decaying-simulator-2022:generated_mana` (note dashes vs. underscore). Its conditions:
 
@@ -52,17 +52,17 @@ Migrating from Botania Tweaks:
 
 * The criterion ID is `super-decaying-simulator-2022:generated_mana`, instead of `botania_tweaks:flower_generated_mana` and `botania_tweaks:total_generated_mana`.
 * Total mana and per-flower mana use the same advancement criterion.
-* The criterion parameters (`flower` and `pools`) are the same.
-* `mana` field is available, instead of just `pools`.
+* The criterion conditions (`flower` and `pools`) are the same as in Botania Tweaks.
+* A `mana` field is available, instead of just `pools`.
 
 # I'm a modder writing a Botania addon, and I would like to add compat with my flowers. What should I do?
 
-I tried to provide an event for this so you could implement it in a Forgey way on your end, but god i hate Forge's red tape lol. I can't fire the event on the dang event bus, and I fear mod construction is too early for inter-mod stuff but creating the config file in common setup is too late. If you know how to do it, get in touch.
+I tried to provide an event for this so you could implement it in a Forgey way on your end, but god i hate Forge's red tape lol. I can't fire the event on the dang event bus, and I fear mod construction is too early for inter-mod stuff but creating the config file in common setup is too late. Maybe IMC? I dunno?? If you know how to do it cleanly, get in touch lol
 
 For now, patch the tail of `SuperDecayingSimulator2022#registerGeneratingFlowers` using Mixin or ASM or whatever. Create new `GeneratingFlowerType` instances and hand them off to the `Consumer`. You must provide:
 
-* a name, to be used in the config file
-* an `IItemProvider` (block or item), used as the icon in the stats GUI
+* a name, to be used in the config file,
+* an `IItemProvider` (block or item), used as the icon in the stats GUI,
 * the `TileEntityType`(s) that belong to your flower.
   * Usually there will be only one `TileEntityType` per flower, but hey, if you added a petite version of your generating flower for some reason, who am I to judge.
-* Call `.passive()` if your flower is already a passive flower.
+* Call `.passive()` if your flower is already a passive flower like the Hydroangeas.
