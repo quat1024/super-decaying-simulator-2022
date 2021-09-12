@@ -10,7 +10,6 @@ import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.IItemProvider;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
-import org.apache.logging.log4j.LogManager;
 import vazkii.botania.common.item.block.ItemBlockSpecialFlower;
 
 import javax.annotation.Nullable;
@@ -98,10 +97,6 @@ public class GeneratingFlowerType implements Comparable<GeneratingFlowerType> {
 	}
 	
 	public static @Nullable GeneratingFlowerType byItem(Item i) {
-		if(i instanceof ItemBlockSpecialFlower) {
-			LogManager.getLogger("aksjdksd").info(i);
-		}
-		
 		if(i instanceof ItemBlockSpecialFlower) return byBlock(((BlockItem) i).getBlock());
 		else return null;
 	}

@@ -4,11 +4,14 @@ import agency.highlysuspect.superdecayingsimulator2022.advancement.SuperDecaying
 import agency.highlysuspect.superdecayingsimulator2022.client.SuperDecayingSimulator2022ClientProxy;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.loot.GlobalLootModifierSerializer;
 import net.minecraftforge.event.RegisterCommandsEvent;
+import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import vazkii.botania.common.block.ModSubtiles;
 
 import java.util.function.Consumer;
@@ -32,7 +35,10 @@ public class SuperDecayingSimulator2022 {
 		MinecraftForge.EVENT_BUS.addListener((RegisterCommandsEvent e) -> SuperDecayingSimulator2022Commands.register(e.getDispatcher()));
 		SuperDecayingSimulator2022NetworkHandler.onInitialize();
 		SuperDecayingSimulator2022AdvancementTriggers.onInitialize();
-		SuperDecayingSimulator2022LootHandler.onInitialize();
+		
+		FMLJavaModLoadingContext.get().getModEventBus().addGenericListener(GlobalLootModifierSerializer.class, (RegistryEvent.Register<GlobalLootModifierSerializer<?>> e) -> {
+			e.getRegistry().register(new PassiveDropModifier.Serializer().setRegistryName(id("passive_drop_modifier")));
+		});
 		
 		PROXY.initalize();
 	}
