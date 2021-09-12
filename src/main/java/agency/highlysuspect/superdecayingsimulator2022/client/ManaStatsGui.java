@@ -23,7 +23,6 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import vazkii.botania.client.core.handler.HUDHandler;
-import vazkii.botania.common.item.ModItems;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -158,7 +157,7 @@ public class ManaStatsGui extends Screen {
 	
 	static class Entry implements Comparable<Entry> {
 		Entry(GeneratingFlowerType type, long amount) {
-			this(type.toText(), type.asItemStack(), amount);
+			this(type.toText(), new ItemStack(type.icon), amount);
 		}
 		
 		public Entry(ITextComponent text, ItemStack icon, long amount) {

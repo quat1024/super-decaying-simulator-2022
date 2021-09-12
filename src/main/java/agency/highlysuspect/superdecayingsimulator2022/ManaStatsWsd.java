@@ -41,6 +41,8 @@ public class ManaStatsWsd extends WorldSavedData {
 	public long total = 0; //Redundant information
 	
 	public void track(GeneratingFlowerType type, int howMuch) {
+		if(type == null) return;
+		
 		table.addTo(type, howMuch);
 		total += howMuch;
 		
@@ -48,7 +50,8 @@ public class ManaStatsWsd extends WorldSavedData {
 	}
 	
 	public long get(GeneratingFlowerType type) {
-		return table.getLong(type);
+		if(type == null) return 0;
+		else return table.getLong(type);
 	}
 	
 	public void resetAll() {
@@ -59,6 +62,8 @@ public class ManaStatsWsd extends WorldSavedData {
 	}
 	
 	public void reset(GeneratingFlowerType type) {
+		if(type == null) return;
+		
 		total -= table.removeLong(type);
 		markDirty();
 	}

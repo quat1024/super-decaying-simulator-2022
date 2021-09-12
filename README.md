@@ -11,8 +11,6 @@ Edit `super-decaying-simulator-2022-common.toml`. You can:
 
 The Hydroangeas can't be made *not* passive, and its decay time can't be set longer than the default of 72000 ticks :) But everything else is fair game.
 
-Addon flowers get piled together under `other_flowers`, this is a hack, get in touch if you want something better.
-
 # Mana Statistics
 
 In the background, this mod transparently tracks the total amount of mana generated in your world, breaking it down per-flower.

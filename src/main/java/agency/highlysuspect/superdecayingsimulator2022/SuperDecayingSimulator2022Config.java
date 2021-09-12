@@ -23,24 +23,16 @@ public class SuperDecayingSimulator2022Config {
 	public SuperDecayingSimulator2022Config(ForgeConfigSpec.Builder builder) {
 		builder.comment("If 'true', these flowers will experience passive decay.").push("Passivity");
 		
-		for(GeneratingFlowerType type : GeneratingFlowerType.allTypes()) {
-			if(!type.passiveByDefault) {
-				if(type == GeneratingFlowerType.UNKNOWN_FLOWER)
-					builder.comment("Lumps together all unrecognized generating flowers from addons.", "I know this isn't the best thing in the world, sorry about that.");
-				
-				passiveOverride.put(type, builder.define(type.name, false));
-			}
-		}
+		for(GeneratingFlowerType type : GeneratingFlowerType.allTypes())
+			if(!type.passiveByDefault) passiveOverride.put(type, builder.define(type.name, false));
 		
 		builder.pop();
 		builder.comment("If they're passive, how many ticks does it take for each flower to decay?").push("DecayTime");
 		
 		int defaultDecayTime = BotaniaAPI.instance().getPassiveFlowerDecay();
 		
-		for(GeneratingFlowerType type : GeneratingFlowerType.allTypes()) {
-			decayTimeOverride.put(type, builder
-				.defineInRange(type.name, defaultDecayTime, 0, type.passiveByDefault ? defaultDecayTime : Integer.MAX_VALUE));
-		}
+		for(GeneratingFlowerType type : GeneratingFlowerType.allTypes())
+			decayTimeOverride.put(type, builder.defineInRange(type.name, defaultDecayTime, 0, type.passiveByDefault ? defaultDecayTime : Integer.MAX_VALUE));
 		
 		builder.pop();
 		

@@ -32,6 +32,8 @@ public class SuperDecayingSimulator2022 {
 		MinecraftForge.EVENT_BUS.addListener((RegisterCommandsEvent e) -> SuperDecayingSimulator2022Commands.register(e.getDispatcher()));
 		SuperDecayingSimulator2022NetworkHandler.onInitialize();
 		SuperDecayingSimulator2022AdvancementTriggers.onInitialize();
+		SuperDecayingSimulator2022LootHandler.onInitialize();
+		
 		PROXY.initalize();
 	}
 	
@@ -40,18 +42,58 @@ public class SuperDecayingSimulator2022 {
 	}
 	
 	public static void registerGeneratingFlowers(Consumer<GeneratingFlowerType> c) {
-		c.accept(new GeneratingFlowerType("rosa_arcana", ModSubtiles.rosaArcana, ModSubtiles.ROSA_ARCANA));
-		c.accept(new GeneratingFlowerType("dandelifeon", ModSubtiles.dandelifeon, ModSubtiles.DANDELIFEON));
-		c.accept(new GeneratingFlowerType("endoflame", ModSubtiles.endoflame, ModSubtiles.ENDOFLAME));
-		c.accept(new GeneratingFlowerType("entropinnyum", ModSubtiles.entropinnyum, ModSubtiles.ENTROPINNYUM));
-		c.accept(new GeneratingFlowerType("gourmaryllis", ModSubtiles.gourmaryllis, ModSubtiles.GOURMARYLLIS));
-		c.accept(new GeneratingFlowerType("hydroangeas", ModSubtiles.hydroangeas, ModSubtiles.HYDROANGEAS).passive());
-		c.accept(new GeneratingFlowerType("kekimurus", ModSubtiles.kekimurus, ModSubtiles.KEKIMURUS));
-		c.accept(new GeneratingFlowerType("munchdew", ModSubtiles.munchdew, ModSubtiles.MUNCHDEW));
-		c.accept(new GeneratingFlowerType("narslimmus", ModSubtiles.narslimmus, ModSubtiles.NARSLIMMUS));
-		c.accept(new GeneratingFlowerType("rafflowsia", ModSubtiles.rafflowsia, ModSubtiles.RAFFLOWSIA));
-		c.accept(new GeneratingFlowerType("shulk_me_not", ModSubtiles.shulkMeNot, ModSubtiles.SHULK_ME_NOT));
-		c.accept(new GeneratingFlowerType("spectrolus", ModSubtiles.spectrolus, ModSubtiles.SPECTROLUS));
-		c.accept(new GeneratingFlowerType("thermalily", ModSubtiles.thermalily, ModSubtiles.THERMALILY));
+		c.accept(new GeneratingFlowerType("rosa_arcana")
+			.blocks(ModSubtiles.rosaArcana, ModSubtiles.rosaArcanaFloating)
+			.tileTypes(ModSubtiles.ROSA_ARCANA));
+		
+		c.accept(new GeneratingFlowerType("dandelifeon")
+			.blocks(ModSubtiles.dandelifeon, ModSubtiles.dandelifeonFloating)
+			.tileTypes(ModSubtiles.DANDELIFEON));
+		
+		c.accept(new GeneratingFlowerType("endoflame")
+			.blocks(ModSubtiles.endoflame, ModSubtiles.endoflameFloating)
+			.tileTypes(ModSubtiles.ENDOFLAME));
+		
+		c.accept(new GeneratingFlowerType("entropinnyum")
+			.blocks(ModSubtiles.entropinnyum, ModSubtiles.entropinnyumFloating)
+			.tileTypes(ModSubtiles.ENTROPINNYUM));
+		
+		c.accept(new GeneratingFlowerType("gourmaryllis")
+			.blocks(ModSubtiles.gourmaryllis, ModSubtiles.gourmaryllisFloating)
+			.tileTypes(ModSubtiles.GOURMARYLLIS));
+		
+		c.accept(new GeneratingFlowerType("hydroangeas")
+			.blocks(ModSubtiles.hydroangeas, ModSubtiles.hydroangeasFloating)
+			.tileTypes(ModSubtiles.HYDROANGEAS)
+			.passive());
+		
+		c.accept(new GeneratingFlowerType("kekimurus")
+			.blocks(ModSubtiles.kekimurus, ModSubtiles.kekimurusFloating)
+			.tileTypes(ModSubtiles.KEKIMURUS));
+		
+		c.accept(new GeneratingFlowerType("munchdew")
+			.blocks(ModSubtiles.munchdew, ModSubtiles.munchdewFloating)
+			.tileTypes(ModSubtiles.MUNCHDEW));
+		
+		c.accept(new GeneratingFlowerType("narslimmus")
+			.blocks(ModSubtiles.narslimmus, ModSubtiles.narslimmusFloating)
+			.tileTypes(ModSubtiles.NARSLIMMUS));
+		
+		c.accept(new GeneratingFlowerType("rafflowsia")
+			.blocks(ModSubtiles.rafflowsia, ModSubtiles.rafflowsiaFloating)
+			.tileTypes(ModSubtiles.RAFFLOWSIA));
+		
+		c.accept(new GeneratingFlowerType("shulk_me_not")
+			.blocks(ModSubtiles.shulkMeNot, ModSubtiles.shulkMeNotFloating)
+			.tileTypes(ModSubtiles.SHULK_ME_NOT));
+		
+		c.accept(new GeneratingFlowerType("spectrolus")
+			.blocks(ModSubtiles.spectrolus, ModSubtiles.spectrolusFloating)
+			.tileTypes(ModSubtiles.SPECTROLUS));
+		
+		c.accept(new GeneratingFlowerType("thermalily")
+			.blocks(ModSubtiles.thermalily, ModSubtiles.thermalilyFloating)
+			.tileTypes(ModSubtiles.THERMALILY));
+		
 	}
 }
