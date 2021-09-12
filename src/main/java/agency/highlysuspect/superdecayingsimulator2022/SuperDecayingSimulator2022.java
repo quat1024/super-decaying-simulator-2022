@@ -2,6 +2,7 @@ package agency.highlysuspect.superdecayingsimulator2022;
 
 import agency.highlysuspect.superdecayingsimulator2022.advancement.SuperDecayingSimulator2022AdvancementTriggers;
 import agency.highlysuspect.superdecayingsimulator2022.client.SuperDecayingSimulator2022ClientProxy;
+import agency.highlysuspect.superdecayingsimulator2022.stats.SuperDecayingSimulator2022NetworkHandler;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.loot.GlobalLootModifierSerializer;
@@ -37,7 +38,7 @@ public class SuperDecayingSimulator2022 {
 		SuperDecayingSimulator2022AdvancementTriggers.onInitialize();
 		
 		FMLJavaModLoadingContext.get().getModEventBus().addGenericListener(GlobalLootModifierSerializer.class, (RegistryEvent.Register<GlobalLootModifierSerializer<?>> e) -> {
-			e.getRegistry().register(new PassiveDropModifier.Serializer().setRegistryName(id("passive_drop_modifier")));
+			e.getRegistry().register(new PassiveDropGlobalLootModifier.Serializer().setRegistryName(id("passive_drop_modifier")));
 		});
 		
 		PROXY.initalize();

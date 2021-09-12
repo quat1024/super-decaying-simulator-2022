@@ -1,11 +1,10 @@
 package agency.highlysuspect.superdecayingsimulator2022.advancement;
 
 import agency.highlysuspect.superdecayingsimulator2022.GeneratingFlowerType;
-import agency.highlysuspect.superdecayingsimulator2022.ManaStatsWsd;
+import agency.highlysuspect.superdecayingsimulator2022.stats.ManaStatsWsd;
 import agency.highlysuspect.superdecayingsimulator2022.SuperDecayingSimulator2022;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
-import com.mojang.realmsclient.util.JsonUtils;
 import net.minecraft.advancements.criterion.AbstractCriterionTrigger;
 import net.minecraft.advancements.criterion.CriterionInstance;
 import net.minecraft.advancements.criterion.EntityPredicate;

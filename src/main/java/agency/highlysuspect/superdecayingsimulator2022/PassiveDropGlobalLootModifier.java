@@ -16,8 +16,8 @@ import net.minecraftforge.common.loot.LootModifier;
 import javax.annotation.Nonnull;
 import java.util.List;
 
-public class PassiveDropModifier extends LootModifier {
-	public PassiveDropModifier(ILootCondition[] conditions) {
+public class PassiveDropGlobalLootModifier extends LootModifier {
+	public PassiveDropGlobalLootModifier(ILootCondition[] conditions) {
 		super(conditions);
 	}
 	
@@ -47,14 +47,14 @@ public class PassiveDropModifier extends LootModifier {
 		return generatedLoot;
 	}
 	
-	public static class Serializer extends GlobalLootModifierSerializer<PassiveDropModifier> {
+	public static class Serializer extends GlobalLootModifierSerializer<PassiveDropGlobalLootModifier> {
 		@Override
-		public PassiveDropModifier read(ResourceLocation location, JsonObject object, ILootCondition[] conditions) {
-			return new PassiveDropModifier(conditions);
+		public PassiveDropGlobalLootModifier read(ResourceLocation location, JsonObject object, ILootCondition[] conditions) {
+			return new PassiveDropGlobalLootModifier(conditions);
 		}
 		
 		@Override
-		public JsonObject write(PassiveDropModifier instance) {
+		public JsonObject write(PassiveDropGlobalLootModifier instance) {
 			return new JsonObject();
 		}
 	}

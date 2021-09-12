@@ -1,6 +1,6 @@
 package agency.highlysuspect.superdecayingsimulator2022.mixin;
 
-import agency.highlysuspect.superdecayingsimulator2022.ServerPlayNetHandlerExt;
+import agency.highlysuspect.superdecayingsimulator2022.stats.ServerPlayNetHandlerExt;
 import net.minecraft.network.play.ServerPlayNetHandler;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;

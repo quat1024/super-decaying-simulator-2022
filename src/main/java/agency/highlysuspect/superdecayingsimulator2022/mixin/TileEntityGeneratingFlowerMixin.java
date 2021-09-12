@@ -1,7 +1,7 @@
 package agency.highlysuspect.superdecayingsimulator2022.mixin;
 
 import agency.highlysuspect.superdecayingsimulator2022.GeneratingFlowerType;
-import agency.highlysuspect.superdecayingsimulator2022.ManaStatsWsd;
+import agency.highlysuspect.superdecayingsimulator2022.stats.ManaStatsWsd;
 import agency.highlysuspect.superdecayingsimulator2022.SuperDecayingSimulator2022Config;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.math.MathHelper;

@@ -1,6 +1,6 @@
 package agency.highlysuspect.superdecayingsimulator2022.advancement;
 
-import agency.highlysuspect.superdecayingsimulator2022.ManaStatsWsd;
+import agency.highlysuspect.superdecayingsimulator2022.stats.ManaStatsWsd;
 import agency.highlysuspect.superdecayingsimulator2022.SuperDecayingSimulator2022Config;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.entity.player.ServerPlayerEntity;

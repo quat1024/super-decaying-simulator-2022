@@ -1,6 +1,9 @@
-package agency.highlysuspect.superdecayingsimulator2022;
+package agency.highlysuspect.superdecayingsimulator2022.stats;
 
+import agency.highlysuspect.superdecayingsimulator2022.SuperDecayingSimulator2022;
 import agency.highlysuspect.superdecayingsimulator2022.client.ManaStatsGui;
+import agency.highlysuspect.superdecayingsimulator2022.stats.ManaStatsWsd;
+import agency.highlysuspect.superdecayingsimulator2022.stats.ServerPlayNetHandlerExt;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
@@ -8,10 +11,8 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
-import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.fml.network.NetworkDirection;
 import net.minecraftforge.fml.network.NetworkEvent;
 import net.minecraftforge.fml.network.NetworkRegistry;

@@ -1,6 +1,6 @@
 package agency.highlysuspect.superdecayingsimulator2022.client;
 
-import agency.highlysuspect.superdecayingsimulator2022.SuperDecayingSimulator2022NetworkHandler;
+import agency.highlysuspect.superdecayingsimulator2022.stats.SuperDecayingSimulator2022NetworkHandler;
 import agency.highlysuspect.superdecayingsimulator2022.SuperDecayingSimulator2022Proxy;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.KeyBinding;

@@ -1,5 +1,6 @@
-package agency.highlysuspect.superdecayingsimulator2022;
+package agency.highlysuspect.superdecayingsimulator2022.stats;
 
+import agency.highlysuspect.superdecayingsimulator2022.GeneratingFlowerType;
 import com.mojang.brigadier.context.CommandContext;
 import it.unimi.dsi.fastutil.objects.Object2LongOpenHashMap;
 import net.minecraft.command.CommandSource;

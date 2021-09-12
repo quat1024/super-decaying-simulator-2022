@@ -1,9 +1,9 @@
 package agency.highlysuspect.superdecayingsimulator2022.client;
 
 import agency.highlysuspect.superdecayingsimulator2022.GeneratingFlowerType;
-import agency.highlysuspect.superdecayingsimulator2022.ManaStatsWsd;
+import agency.highlysuspect.superdecayingsimulator2022.stats.ManaStatsWsd;
 import agency.highlysuspect.superdecayingsimulator2022.SuperDecayingSimulator2022;
-import agency.highlysuspect.superdecayingsimulator2022.SuperDecayingSimulator2022NetworkHandler;
+import agency.highlysuspect.superdecayingsimulator2022.stats.SuperDecayingSimulator2022NetworkHandler;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;

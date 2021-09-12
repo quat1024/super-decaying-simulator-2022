@@ -1,5 +1,7 @@
 package agency.highlysuspect.superdecayingsimulator2022;
 
+import agency.highlysuspect.superdecayingsimulator2022.stats.ManaStatsWsd;
+import agency.highlysuspect.superdecayingsimulator2022.stats.SuperDecayingSimulator2022NetworkHandler;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
