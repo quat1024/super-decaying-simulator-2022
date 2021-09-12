@@ -6,7 +6,8 @@
 	"refmap": "super-decaying-simulator-2022.refmap.json",
 	"mixins": [
 		"TileEntityGeneratingFlowerMixin",
-		"ServerPlayNetHandlerMixin"
+		"ServerPlayNetHandlerMixin",
+		"ItemBlockSpecialFlowerMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1
